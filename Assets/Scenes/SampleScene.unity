@@ -969,7 +969,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 2.5
+  m_GravityScale: 2
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -990,8 +990,8 @@ Transform:
   m_GameObject: {fileID: 136440251}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -25.38, y: -4.73, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -25.4529, y: -4.7786, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 938144508}
@@ -31664,7 +31664,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -42.13909, y: -7.8355503, z: -10}
+  m_LocalPosition: {x: -42.21199, y: -7.8841505, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -57697,8 +57697,8 @@ Transform:
   m_GameObject: {fileID: 938144507}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.6193123, y: 1, z: 1}
+  m_LocalPosition: {x: -0.4971, y: 0.0373, z: 0}
+  m_LocalScale: {x: 1.1221834, y: 1.0373, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 136440253}
@@ -107156,11 +107156,11 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 9.168667, y: -0.85653305}
+  m_Offset: {x: -0.87, y: -0.3356138}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -107170,7 +107170,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.2915344, y: 1.0945292}
+  m_Size: {x: 1.2915344, y: 1.5257567}
   m_EdgeRadius: 0
 --- !u!114 &1232966760
 MonoBehaviour:
@@ -107184,8 +107184,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdd8359195e3cc04bad6993d6ad36bd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemigoPersiguiendo
-  velocidad: 3.5
-  distanciaDeteccion: 10
+  velocidad: 3.6
+  distanciaPatrulla: 3
 --- !u!50 &1232966761
 Rigidbody2D:
   serializedVersion: 5
@@ -135488,7 +135488,7 @@ Transform:
   m_GameObject: {fileID: 2031227896}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -42.13909, y: -7.8355503, z: -10}
+  m_LocalPosition: {x: -42.21199, y: -7.8841505, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

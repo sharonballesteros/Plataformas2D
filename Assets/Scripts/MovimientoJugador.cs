@@ -10,7 +10,7 @@ public class MovimientoJugador : MonoBehaviour
 
     [Header("Configuración de Movimiento")]
     public float velocidad = 8f;
-    public float velocidadSalto = 15f;
+    public float velocidadSalto = 18f;
 
     [Header("Detección de Suelo")]
     public LayerMask capaSuelo;
