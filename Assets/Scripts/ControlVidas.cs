@@ -60,7 +60,14 @@ public class ControlVidas : MonoBehaviour
             ActualizarVidasUI();
             StartCoroutine(EfectoDanio());
 
-            // Si las vidas llegan a 0, puedes reiniciar o llamar a Game Over aquí
+            // --- NUEVO: Reproducir sonido de muerte/daño ---
+            ControladorSonido controladorSonido = FindFirstObjectByType<ControladorSonido>();
+            if (controladorSonido != null)
+            {
+                controladorSonido.ReproducirMuerte();
+            }
+
+            // Si las vidas llegan a 0...
             if (vidas <= 0)
             {
                 ControladorJuego controlador = FindFirstObjectByType<ControladorJuego>();

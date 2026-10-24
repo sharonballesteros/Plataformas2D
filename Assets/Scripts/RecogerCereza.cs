@@ -22,10 +22,9 @@ public class RecogerCereza : MonoBehaviour
         }
         ActualizarUI();
     }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Verifica si el objeto que colisiona es el jugador (asegúrate de que tu player tenga el Tag "Player")
+        // Verifica si el objeto que colisiona es el jugador
         if (collision.CompareTag("Player"))
         {
             // 1. Suma 1 a las cerezas
@@ -33,6 +32,13 @@ public class RecogerCereza : MonoBehaviour
 
             // 2. Actualiza el texto en la pantalla
             ActualizarUI();
+
+            // --- NUEVO: Reproducir sonido de cereza ---
+            ControladorSonido controladorSonido = FindFirstObjectByType<ControladorSonido>();
+            if (controladorSonido != null)
+            {
+                controladorSonido.ReproducirCereza();
+            }
 
             // 3. Destruye la cereza
             Destroy(gameObject);

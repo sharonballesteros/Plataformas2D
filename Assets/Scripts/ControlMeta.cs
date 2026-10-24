@@ -11,6 +11,13 @@ public class ControlMeta : MonoBehaviour
         {
             Debug.Log("fin de nivel");
 
+            // --- ¡AQUÍ REPRODUCIMOS EL AUDIO DE VICTORIA! ---
+            ControladorSonido controladorSonido = FindFirstObjectByType<ControladorSonido>();
+            if (controladorSonido != null)
+            {
+                controladorSonido.ReproducirVictoria();
+            }
+
             // 1. Oculta al jugador
             collision.gameObject.SetActive(false);
 

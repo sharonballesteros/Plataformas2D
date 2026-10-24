@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class MovimientoJugador : MonoBehaviour
 {
+    [Header("Ataque a Distancia")]
+    public GameObject proyectilPrefab;
+    public Transform puntoDisparo;
+
     [Header("Configuración de Movimiento")]
     public float velocidad = 8f;
     public float velocidadSalto = 15f;
@@ -54,12 +58,25 @@ public class MovimientoJugador : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && enSuelo)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, velocidadSalto);
+
+            // --- Reproducir sonido de salto ---
+            ControladorSonido controladorSonido = FindFirstObjectByType<ControladorSonido>();
+            if (controladorSonido != null)
+            {
+                controladorSonido.ReproducirSalto();
+            }
+        }
+
+        // --- NUEVO: Disparar proyectil con la tecla F ---
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            Disparar();
         }
 
         // 5. Animación de salto
         animator.SetBool("estaSaltando", !enSuelo);
 
-        // 6. Flip horizontal del personaje (equivalente a tu último gráfico)
+        // 6. Flip horizontal del personaje
         if (entradaHorizontal == -1f)
         {
             spriteRenderer.flipX = true; // Mira hacia la izquierda
@@ -67,6 +84,27 @@ public class MovimientoJugador : MonoBehaviour
         else if (entradaHorizontal == 1f)
         {
             spriteRenderer.flipX = false; // Mira hacia la derecha
+        }
+    }
+
+    void Disparar()
+    {
+        if (proyectilPrefab != null && puntoDisparo != null)
+        {
+            // 1. Activa la animación de disparo en el Animator
+            if (animator != null)
+            {
+                animator.SetTrigger("disparar");
+            }
+
+            // 2. Instancia y configura el proyectil
+            GameObject bala = Instantiate(proyectilPrefab, puntoDisparo.position, Quaternion.identity);
+            ProyectilJugador scriptBala = bala.GetComponent<ProyectilJugador>();
+            if (scriptBala != null)
+            {
+                // Detecta hacia dónde mira el sprite para disparar en esa dirección
+                scriptBala.direccion = spriteRenderer.flipX ? -1 : 1;
+            }
         }
     }
 
