@@ -5,6 +5,8 @@ public class MovimientoJugador : MonoBehaviour
     [Header("Ataque a Distancia")]
     public GameObject proyectilPrefab;
     public Transform puntoDisparo;
+    public float cadenciaAtaque = 0.5f;
+    private float ultimoDisparo;
 
     [Header("Configuración de Movimiento")]
     public float velocidad = 8f;
@@ -15,106 +17,99 @@ public class MovimientoJugador : MonoBehaviour
     private CapsuleCollider2D capsuleCollider;
 
     [Header("Referencias")]
-    public SpriteRenderer spriteRenderer; // Arrastra aquí el SpriteRenderer de tu hijo "imagen"
+    public SpriteRenderer spriteRenderer;
 
     private Rigidbody2D rb;
     private Animator animator;
 
-    private void Awake()
+   private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
         capsuleCollider = GetComponent<CapsuleCollider2D>();
+        animator = GetComponent<Animator>(); // Toma el Animator del objeto principal (Player)
 
-        // Si no asignaste el SpriteRenderer en el inspector, lo busca automáticamente en un hijo llamado "imagen"
-        if (spriteRenderer == null)
+        // Busca únicamente el SpriteRenderer en el objeto hijo "imagen"
+        Transform hijoImagen = transform.Find("imagen");
+        if (hijoImagen != null)
         {
-            Transform hijoImagen = transform.Find("imagen");
-            if (hijoImagen != null)
-            {
-                spriteRenderer = hijoImagen.GetComponent<SpriteRenderer>();
-            }
-            else
-            {
-                spriteRenderer = GetComponent<SpriteRenderer>();
-            }
+            spriteRenderer = hijoImagen.GetComponent<SpriteRenderer>();
+        }
+        else
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
         }
     }
 
     private void Update()
     {
-        // 1. Movimiento horizontal
         float entradaHorizontal = Input.GetAxisRaw("Horizontal");
         rb.linearVelocity = new Vector2(entradaHorizontal * velocidad, rb.linearVelocity.y);
 
-        // 2. Animación de correr
-        bool estaCorriendo = entradaHorizontal != 0;
-        animator.SetBool("estaCorriendo", estaCorriendo);
+        animator.SetBool("estaCorriendo", entradaHorizontal != 0);
 
-        // 3. Verificamos si está en el suelo
         bool enSuelo = EstaEnSuelo();
 
-        // 4. Salto con barra espaciadora
         if (Input.GetKeyDown(KeyCode.Space) && enSuelo)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, velocidadSalto);
 
-            // --- Reproducir sonido de salto ---
             ControladorSonido controladorSonido = FindFirstObjectByType<ControladorSonido>();
-            if (controladorSonido != null)
-            {
-                controladorSonido.ReproducirSalto();
-            }
+            if (controladorSonido != null) controladorSonido.ReproducirSalto();
         }
 
-        // --- NUEVO: Disparar proyectil con la tecla F ---
-        if (Input.GetKeyDown(KeyCode.F))
+        // Disparo con límite de cadencia
+        if (Input.GetKeyDown(KeyCode.F) && Time.time > ultimoDisparo + cadenciaAtaque)
         {
             Disparar();
+            ultimoDisparo = Time.time;
         }
 
-        // 5. Animación de salto
         animator.SetBool("estaSaltando", !enSuelo);
 
-        // 6. Flip horizontal del personaje
-        if (entradaHorizontal == -1f)
+        // Volteo del sprite
+        if (entradaHorizontal != 0)
         {
-            spriteRenderer.flipX = true; // Mira hacia la izquierda
-        }
-        else if (entradaHorizontal == 1f)
-        {
-            spriteRenderer.flipX = false; // Mira hacia la derecha
+            spriteRenderer.flipX = entradaHorizontal < 0;
         }
     }
 
-    void Disparar()
+   void Disparar()
+    {
+        // Solo activa la animación, la piedra aún no sale
+        if (proyectilPrefab != null && puntoDisparo != null)
+        {
+            if (animator != null) animator.SetTrigger("disparar");
+        }
+    }
+
+    // Esta función DEBE ser 'public' para que la animación pueda encontrarla
+   public void LanzarPiedra()
     {
         if (proyectilPrefab != null && puntoDisparo != null)
         {
-            // 1. Activa la animación de disparo en el Animator
-            if (animator != null)
-            {
-                animator.SetTrigger("disparar");
-            }
+            float direccionX = spriteRenderer.flipX ? -Mathf.Abs(puntoDisparo.localPosition.x) : Mathf.Abs(puntoDisparo.localPosition.x);
+            Vector3 posicionReal = transform.position + new Vector3(direccionX, puntoDisparo.localPosition.y, 0);
+            Quaternion rotacion = spriteRenderer.flipX ? Quaternion.Euler(0, 180, 0) : Quaternion.identity;
+            
+            Instantiate(proyectilPrefab, posicionReal, rotacion);
 
-            // 2. Instancia y configura el proyectil
-            GameObject bala = Instantiate(proyectilPrefab, puntoDisparo.position, Quaternion.identity);
-            ProyectilJugador scriptBala = bala.GetComponent<ProyectilJugador>();
-            if (scriptBala != null)
+            // --- NUEVO: Llamar al sonido ---
+            ControladorSonido controladorSonido = FindFirstObjectByType<ControladorSonido>();
+            if (controladorSonido != null)
             {
-                // Detecta hacia dónde mira el sprite para disparar en esa dirección
-                scriptBala.direccion = spriteRenderer.flipX ? -1 : 1;
+                controladorSonido.ReproducirDisparo();
             }
         }
     }
 
-    private bool EstaEnSuelo()
+private bool EstaEnSuelo()
     {
         if (capsuleCollider == null) return false;
 
         Vector2 origen = (Vector2)capsuleCollider.bounds.center;
         Vector2 tamaño = capsuleCollider.bounds.size;
-
+        
+        // Lanza una caja invisible hacia abajo para detectar colisiones con la capa "Suelo"
         RaycastHit2D hit = Physics2D.BoxCast(origen, tamaño, 0f, Vector2.down, 0.1f, capaSuelo);
 
         return hit.collider != null;

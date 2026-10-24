@@ -2,30 +2,49 @@ using UnityEngine;
 
 public class ProyectilJugador : MonoBehaviour
 {
-    public float velocidad = 12f;
+    public float velocidad = 15f;
+    public int danio = 1;
+    public float tiempoDeVida = 3f;
+
     private Rigidbody2D rb;
-    public int direccion = 1; // 1 para derecha, -1 para izquierda
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        // Se destruye automáticamente a los 3 segundos si no choca con nada
-        Destroy(gameObject, 3f);
+        rb.linearVelocity = transform.right * velocidad;
+        Destroy(gameObject, tiempoDeVida);
     }
 
-    void Update()
+    private void OnTriggerEnter2D(Collider2D col)
     {
-        rb.linearVelocity = new Vector2(velocidad * direccion, rb.linearVelocity.y);
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        // Si choca con un enemigo que tenga un script de destrucción o vida
-        if (collision.gameObject.layer == LayerMask.NameToLayer("enemigo") || collision.CompareTag("Enemigo"))
+        if (col.CompareTag("Enemigo") || col.gameObject.name.Contains("Ene"))
         {
-            // Destruye al enemigo o le quita vida
-            Destroy(collision.transform.root.gameObject); // Destruye al padre del enemigo
-            Destroy(gameObject); // Destruye el proyectil
+            // Busca el script de destruccion en el objeto golpeado o en sus hijos
+            DestruirEnemigo enemigo = col.GetComponent<DestruirEnemigo>();
+            if (enemigo == null) 
+            {
+                enemigo = col.GetComponentInChildren<DestruirEnemigo>();
+            }
+
+            if (enemigo != null)
+            {
+                enemigo.Explotar();
+            }
+            else
+            {
+                Destroy(col.gameObject);
+            }
+
+            DestruirProyectil();
         }
+        else if (col.CompareTag("Escenario") || col.CompareTag("Suelo") || col.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            DestruirProyectil();
+        }
+    }
+
+    void DestruirProyectil()
+    {
+        Destroy(gameObject);
     }
 }

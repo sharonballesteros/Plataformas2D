@@ -11,6 +11,10 @@ public class ControladorSonido : MonoBehaviour
     public AudioClip clipWin;
     public AudioClip clipMusic;
 
+    [Header("Sonidos de Ataque")]
+    public AudioClip sonidoDisparo;
+    public AudioClip sonidoExplosion;
+
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
@@ -22,7 +26,7 @@ public class ControladorSonido : MonoBehaviour
 
     void Start()
     {
-        // Reproduce la música de fondo en bucle al iniciar la escena
+        // Reproduce la musica de fondo en bucle al iniciar
         if (audioSource != null && clipMusic != null)
         {
             audioSource.clip = clipMusic;
@@ -31,7 +35,6 @@ public class ControladorSonido : MonoBehaviour
         }
     }
 
-    // Método para reproducir pasando el clip directamente
     public void ReproduceSonido(AudioClip clip)
     {
         if (clip != null)
@@ -40,7 +43,23 @@ public class ControladorSonido : MonoBehaviour
         }
     }
 
-    // Métodos rápidos para llamarlos por código
+    public void ReproducirDisparo()
+    {
+        if (sonidoDisparo != null)
+        {
+            audioSource.PlayOneShot(sonidoDisparo); 
+        }
+    }
+
+    public void ReproducirExplosion()
+    {
+        if (sonidoExplosion != null)
+        {
+            audioSource.PlayOneShot(sonidoExplosion);
+        }
+    }
+
+    // Metodos rapidos
     public void ReproducirSalto() { ReproduceSonido(clipJump); }
     public void ReproducirCereza() { ReproduceSonido(clipCereza); }
     public void ReproducirMuerte() { ReproduceSonido(clipMuerte); }
