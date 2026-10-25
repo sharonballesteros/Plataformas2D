@@ -15594,8 +15594,8 @@ GameObject:
   m_Component:
   - component: {fileID: 198084437}
   - component: {fileID: 198084440}
-  - component: {fileID: 198084439}
   - component: {fileID: 198084438}
+  - component: {fileID: 198084443}
   m_Layer: 12
   m_Name: Ene3
   m_TagString: Enemigo
@@ -15612,12 +15612,13 @@ Transform:
   m_GameObject: {fileID: 198084436}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -9.99, y: -4.79, z: 0}
+  m_LocalPosition: {x: -12.61, y: -4.79, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1551728505}
   - {fileID: 1559295711}
+  - {fileID: 1095494173}
+  - {fileID: 1551728505}
   m_Father: {fileID: 1212276591}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &198084438
@@ -15647,21 +15648,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &198084439
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 198084436}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdd8359195e3cc04bad6993d6ad36bd3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemigoPersiguiendo
-  velocidadPatrulla: 2
-  distanciaPatrulla: 20
-  distanciaAtaque: 3.5
 --- !u!61 &198084440
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -15696,7 +15682,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 26.04, y: -2.1853411}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -15708,6 +15694,24 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.2915344, y: 1.6044698}
   m_EdgeRadius: 0
+--- !u!114 &198084443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 198084436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da67de124b1787241bb0bc7b91a91fc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemigoDisparador2
+  velocidadPatrulla: 2
+  tiempoPatrulla: 2.5
+  distanciaVision: 30
+  proyectilPrefab: {fileID: 4136492377078391457, guid: a8de334b7abd982438a34d20d5ecc967, type: 3}
+  puntoDisparo: {fileID: 1095494173}
+  tiempoEntreDisparos: 2
 --- !u!1 &198974210
 GameObject:
   m_ObjectHideFlags: 0
@@ -67639,6 +67643,37 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &1095494172
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1095494173}
+  m_Layer: 12
+  m_Name: PuntoDisparo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1095494173
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1095494172}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 25.4, y: -2.59, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 198084437}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1114719089
 GameObject:
   m_ObjectHideFlags: 0
@@ -109920,7 +109955,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 8.996951, y: 0.43856764}
+  m_Offset: {x: 25.99, y: -1.23}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -109930,7 +109965,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.4904461, y: 0.13959861}
+  m_Size: {x: 1.4904461, y: 0.42053068}
   m_EdgeRadius: 0
 --- !u!1 &1559295710
 GameObject:
@@ -109943,6 +109978,7 @@ GameObject:
   - component: {fileID: 1559295711}
   - component: {fileID: 1559295712}
   - component: {fileID: 1559295713}
+  - component: {fileID: 1559295714}
   m_Layer: 0
   m_Name: ene2.1
   m_TagString: Untagged
@@ -110034,7 +110070,7 @@ Animator:
   m_GameObject: {fileID: 1559295710}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ead1b0b980733e9418092d419091d04a, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -110046,6 +110082,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1559295714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1559295710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7195245de96a0d49a550c0be6421354, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RelevoAnimacion2
 --- !u!1 &1571596722
 GameObject:
   m_ObjectHideFlags: 0
