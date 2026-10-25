@@ -31,9 +31,8 @@ public class EnemigoDisparador2 : MonoBehaviour
 
         if (puntoDisparo != null)
         {
-            // Guardamos la distancia inicial desde el centro para usarla como offset seguro
             offsetDisparoOriginalX = Mathf.Abs(puntoDisparo.localPosition.x);
-            if (offsetDisparoOriginalX == 0f) offsetDisparoOriginalX = 0.5f; // Valor por defecto si estaba en 0
+            if (offsetDisparoOriginalX == 0f) offsetDisparoOriginalX = 0.5f;
         }
 
         temporizadorPatrulla = tiempoPatrulla;
@@ -57,7 +56,6 @@ public class EnemigoDisparador2 : MonoBehaviour
 
         if (distancia <= distanciaVision)
         {
-            // Detener movimiento al atacar
             if (rb != null) rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
 
             if (animatorHijo != null)
@@ -65,7 +63,6 @@ public class EnemigoDisparador2 : MonoBehaviour
                 animatorHijo.SetBool("estaCaminando", false);
             }
 
-            // Gira hacia el jugador (corregido con '!')
             bool mirarIzquierda = player.position.x < transform.position.x;
             if (spriteRendererHijo != null)
             {
@@ -83,7 +80,6 @@ public class EnemigoDisparador2 : MonoBehaviour
         }
         else
         {
-            // Movimiento de patrulla
             if (rb != null)
             {
                 rb.linearVelocity = new Vector2(direccion * velocidadPatrulla, rb.linearVelocity.y);
@@ -101,7 +97,6 @@ public class EnemigoDisparador2 : MonoBehaviour
                 temporizadorPatrulla = tiempoPatrulla;
             }
 
-            // Voltear el sprite según la dirección de patrulla
             if (spriteRendererHijo != null)
             {
                 spriteRendererHijo.flipX = (direccion < 0);
@@ -113,14 +108,11 @@ public class EnemigoDisparador2 : MonoBehaviour
     {
         if (proyectilPrefab != null && puntoDisparo != null)
         {
-            // Determina la dirección según el estado de flipX del sprite
             float dirProj = (spriteRendererHijo != null && spriteRendererHijo.flipX) ? -1f : 1f;
 
-            // Posiciona el punto de disparo de forma segura al frente sin romper el transform
             float posXSegura = offsetDisparoOriginalX * dirProj;
             puntoDisparo.localPosition = new Vector3(posXSegura, puntoDisparo.localPosition.y, puntoDisparo.localPosition.z);
 
-            // Instancia la bolita
             GameObject proyectil = Instantiate(proyectilPrefab, puntoDisparo.position, Quaternion.identity);
 
             SpriteRenderer srProj = proyectil.GetComponent<SpriteRenderer>();
@@ -137,25 +129,27 @@ public class EnemigoDisparador2 : MonoBehaviour
         }
     }
 
-    // --- NUEVO: MÉTODOS PARA MORIR AL RECIBIR EL DISPARO DEL PLAYER ---
+    // --- MUERTE AL RECIBIR EL DISPARO DEL JUGADOR (Detecta por nombre o componente de bala) ---
+
+    // --- MUERTE AL RECIBIR EL DISPARO DEL JUGADOR USANDO TU TAG ---
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // Si choca con el proyectil del jugador (asegúrate de que el proyectil tenga el Tag "ProyectilJugador")
+        // Si el objeto que choca es el proyectil del jugador
         if (collision.gameObject.CompareTag("ProyectilJugador"))
         {
-            Destroy(collision.gameObject); // Destruye el proyectil del jugador
-            Destroy(gameObject);           // Destruye al enemigo azul completo (Ene3)
+            Destroy(collision.gameObject); // Destruye la bala
+            Destroy(gameObject);           // Destruye al enemigo azul (Ene3)
         }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Por si el proyectil del jugador usa IsTrigger
-        if (collision.CompareTag("ProyectilJugador"))
+        // Por si el proyectil usa IsTrigger
+        if (collision.gameObject.CompareTag("ProyectilJugador"))
         {
-            Destroy(collision.gameObject);
-            Destroy(gameObject);
+            Destroy(collision.gameObject); // Destruye la bala
+            Destroy(gameObject);           // Destruye al enemigo azul (Ene3)
         }
     }
 }

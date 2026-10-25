@@ -1162,6 +1162,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 419c2003e92eeae43badea3384d8c51f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ControlVidas
+  vidas: 3
   vidasUI:
   - {fileID: 1589756953}
   - {fileID: 1584216893}
@@ -15596,9 +15597,9 @@ GameObject:
   - component: {fileID: 198084440}
   - component: {fileID: 198084438}
   - component: {fileID: 198084443}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Ene3
-  m_TagString: Enemigo
+  m_TagString: EnemigoDisparador
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -15617,7 +15618,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1559295711}
-  - {fileID: 1095494173}
   - {fileID: 1551728505}
   m_Father: {fileID: 1212276591}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -67668,11 +67668,11 @@ Transform:
   m_GameObject: {fileID: 1095494172}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 25.4, y: -2.59, z: 0}
+  m_LocalPosition: {x: 0.6, y: -0.35000002, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 198084437}
+  m_Father: {fileID: 1559295711}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1114719089
 GameObject:
@@ -109902,7 +109902,7 @@ Transform:
   m_GameObject: {fileID: 1551728504}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.19, y: -0.19, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -109995,10 +109995,11 @@ Transform:
   m_GameObject: {fileID: 1559295710}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 26.02, y: -1.88, z: 0}
+  m_LocalPosition: {x: 26.86, y: -1.88, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1095494173}
   m_Father: {fileID: 198084437}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1559295712

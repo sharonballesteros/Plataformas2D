@@ -11,7 +11,7 @@ public class DestruirEnemigo : MonoBehaviour
             Rigidbody2D rbJugador = collision.GetComponent<Rigidbody2D>();
             if (rbJugador != null)
             {
-                rbJugador.linearVelocity = new Vector2(rbJugador.linearVelocity.x, 7f); 
+                rbJugador.linearVelocity = new Vector2(rbJugador.linearVelocity.x, 7f);
             }
 
             Explotar();
@@ -47,12 +47,19 @@ public class DestruirEnemigo : MonoBehaviour
 
         if (transform.parent != null)
         {
+            // Apaga el script del enemigo blanco si lo tiene
             ControlEnemigo controlPadre = transform.parent.GetComponent<ControlEnemigo>();
             if (controlPadre != null) controlPadre.enabled = false;
 
+            // Apaga el script del enemigo azul (Ene3) si este script estuviera en él
+            EnemigoDisparador2 controlDisparador = transform.parent.GetComponent<EnemigoDisparador2>();
+            if (controlDisparador != null) controlDisparador.enabled = false;
+
+            // Desactiva únicamente los colliders de ESTE enemigo en específico
             Collider2D[] cols = transform.parent.GetComponentsInChildren<Collider2D>();
             foreach (Collider2D c in cols) c.enabled = false;
 
+            // Destruye exclusivamente al objeto padre de este script
             Destroy(transform.parent.gameObject, 0.05f);
         }
         else

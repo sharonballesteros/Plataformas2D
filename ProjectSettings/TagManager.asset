@@ -7,6 +7,8 @@ TagManager:
   - Enemigo
   - Escenario
   - Suelo
+  - EnemigoDisparador
+  - ProyectilJugador
   layers:
   - Default
   - TransparentFX

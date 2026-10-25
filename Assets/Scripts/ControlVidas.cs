@@ -4,13 +4,18 @@ using System.Collections.Generic;
 
 public class ControlVidas : MonoBehaviour
 {
-    public static int vidas = 3;
+    // Quitamos el 'static' para que las vidas pertenezcan a esta instancia de la escena actual
+    public int vidas = 3;
     public List<GameObject> vidasUI;
 
     private Animator animator;
 
     private void Start()
     {
+        // Al iniciar la escena, nos aseguramos de que empiece con las 3 vidas predeterminadas
+        // (O puedes leerlas de un GameManager si lo manejas desde otro script)
+        vidas = 3;
+
         // Busca el Animator en este objeto o en su hijo "imagen"
         animator = GetComponent<Animator>();
         if (animator == null)
@@ -60,7 +65,7 @@ public class ControlVidas : MonoBehaviour
             ActualizarVidasUI();
             StartCoroutine(EfectoDanio());
 
-            // --- NUEVO: Reproducir sonido de muerte/daño ---
+            // Reproducir sonido de muerte/daño
             ControladorSonido controladorSonido = FindFirstObjectByType<ControladorSonido>();
             if (controladorSonido != null)
             {
