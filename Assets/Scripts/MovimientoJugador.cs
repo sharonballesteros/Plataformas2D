@@ -11,6 +11,8 @@ public class MovimientoJugador : MonoBehaviour
     [Header("Configuración de Movimiento")]
     public float velocidad = 8f;
     public float velocidadSalto = 18f;
+    public int saltosMaximos = 2; 
+    private int saltosRealizados; 
 
     [Header("Detección de Suelo")]
     public LayerMask capaSuelo;
@@ -26,9 +28,8 @@ public class MovimientoJugador : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         capsuleCollider = GetComponent<CapsuleCollider2D>();
-        animator = GetComponent<Animator>(); // Toma el Animator del objeto principal (Player)
+        animator = GetComponent<Animator>();
 
-        // Busca únicamente el SpriteRenderer en el objeto hijo "imagen"
         Transform hijoImagen = transform.Find("imagen");
         if (hijoImagen != null)
         {
@@ -49,15 +50,28 @@ public class MovimientoJugador : MonoBehaviour
 
         bool enSuelo = EstaEnSuelo();
 
-        if (Input.GetKeyDown(KeyCode.Space) && enSuelo)
+        if (enSuelo && rb.linearVelocity.y <= 0.1f)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, velocidadSalto);
+            saltosRealizados = 0;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space) && saltosRealizados < saltosMaximos)
+        {
+            // El primer salto usa el 100% de fuerza, los siguientes usan el 50%
+            float fuerzaSalto = (saltosRealizados == 0) ? velocidadSalto : velocidadSalto * 0.5f;
+            
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, fuerzaSalto);
+            saltosRealizados++;
 
             ControladorSonido controladorSonido = FindFirstObjectByType<ControladorSonido>();
             if (controladorSonido != null) controladorSonido.ReproducirSalto();
+
+            if (saltosRealizados > 1)
+            {
+                animator.SetTrigger("activarDobleSalto");
+            }
         }
 
-        // Disparo con límite de cadencia
         if (Input.GetKeyDown(KeyCode.F) && Time.time > ultimoDisparo + cadenciaAtaque)
         {
             Disparar();
@@ -66,7 +80,6 @@ public class MovimientoJugador : MonoBehaviour
 
         animator.SetBool("estaSaltando", !enSuelo);
 
-        // Volteo del sprite
         if (entradaHorizontal != 0)
         {
             spriteRenderer.flipX = entradaHorizontal < 0;
@@ -75,14 +88,12 @@ public class MovimientoJugador : MonoBehaviour
 
    void Disparar()
     {
-        // Solo activa la animación, la piedra aún no sale
         if (proyectilPrefab != null && puntoDisparo != null)
         {
             if (animator != null) animator.SetTrigger("disparar");
         }
     }
 
-    // Esta función DEBE ser 'public' para que la animación pueda encontrarla
    public void LanzarPiedra()
     {
         if (proyectilPrefab != null && puntoDisparo != null)
@@ -93,7 +104,6 @@ public class MovimientoJugador : MonoBehaviour
             
             Instantiate(proyectilPrefab, posicionReal, rotacion);
 
-            // --- NUEVO: Llamar al sonido ---
             ControladorSonido controladorSonido = FindFirstObjectByType<ControladorSonido>();
             if (controladorSonido != null)
             {
@@ -102,14 +112,14 @@ public class MovimientoJugador : MonoBehaviour
         }
     }
 
-private bool EstaEnSuelo()
+    private bool EstaEnSuelo()
     {
         if (capsuleCollider == null) return false;
 
         Vector2 origen = (Vector2)capsuleCollider.bounds.center;
-        Vector2 tamaño = capsuleCollider.bounds.size;
+        // Reducimos el ancho de la caja al 60% para que no roce las paredes laterales
+        Vector2 tamaño = new Vector2(capsuleCollider.bounds.size.x * 0.6f, capsuleCollider.bounds.size.y);
         
-        // Lanza una caja invisible hacia abajo para detectar colisiones con la capa "Suelo"
         RaycastHit2D hit = Physics2D.BoxCast(origen, tamaño, 0f, Vector2.down, 0.1f, capaSuelo);
 
         return hit.collider != null;
