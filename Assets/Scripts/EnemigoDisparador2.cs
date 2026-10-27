@@ -2,18 +2,19 @@ using UnityEngine;
 
 public class EnemigoDisparador2 : MonoBehaviour
 {
-    [Header("Configuración de Movimiento")]
+    [Header("Configuracion de Movimiento")]
     public float velocidadPatrulla = 2f;
     public float tiempoPatrulla = 2.5f;
-    public float distanciaVision = 25f;
+    public float distanciaVision = 8f;
+    public float distanciaAtaque = 4f;
 
-    [Header("Configuración de Disparo")]
+    [Header("Configuracion de Disparo")]
     public GameObject proyectilPrefab;
     public Transform puntoDisparo;
     public float tiempoEntreDisparos = 2.5f;
 
     private Transform player;
-    private int direccion = 1;
+    private int direccion = -1; // Comienza caminando a la izquierda
     private float temporizadorPatrulla;
     private SpriteRenderer spriteRendererHijo;
     private Animator animatorHijo;
@@ -24,8 +25,6 @@ public class EnemigoDisparador2 : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        if (rb != null) rb.freezeRotation = true;
-
         spriteRendererHijo = GetComponentInChildren<SpriteRenderer>();
         animatorHijo = GetComponentInChildren<Animator>();
 
@@ -34,7 +33,6 @@ public class EnemigoDisparador2 : MonoBehaviour
             offsetDisparoOriginalX = Mathf.Abs(puntoDisparo.localPosition.x);
             if (offsetDisparoOriginalX == 0f) offsetDisparoOriginalX = 0.5f;
         }
-
         temporizadorPatrulla = tiempoPatrulla;
     }
 
@@ -48,47 +46,36 @@ public class EnemigoDisparador2 : MonoBehaviour
         }
 
         float distancia = Vector2.Distance(transform.position, player.position);
+        if (temporizadorDisparo > 0) temporizadorDisparo -= Time.deltaTime;
 
-        if (temporizadorDisparo > 0)
+        if (distancia <= distanciaAtaque)
         {
-            temporizadorDisparo -= Time.deltaTime;
-        }
-
-        if (distancia <= distanciaVision)
-        {
+            // Detenerse y atacar
             if (rb != null) rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
-
-            if (animatorHijo != null)
-            {
-                animatorHijo.SetBool("estaCaminando", false);
-            }
-
-            bool mirarIzquierda = player.position.x < transform.position.x;
-            if (spriteRendererHijo != null)
-            {
-                spriteRendererHijo.flipX = !mirarIzquierda;
-            }
+            if (animatorHijo != null) animatorHijo.SetBool("estaCaminando", false);
+            
+            // Voltear hacia el jugador
+            if (spriteRendererHijo != null) spriteRendererHijo.flipX = player.position.x < transform.position.x; 
 
             if (temporizadorDisparo <= 0f)
             {
-                if (animatorHijo != null)
-                {
-                    animatorHijo.SetTrigger("atacar");
-                }
+                if (animatorHijo != null) animatorHijo.SetTrigger("atacar");
                 temporizadorDisparo = tiempoEntreDisparos;
             }
         }
+        else if (distancia <= distanciaVision)
+        {
+            // Perseguir
+            float dirPersecucion = player.position.x < transform.position.x ? -1f : 1f;
+            if (rb != null) rb.linearVelocity = new Vector2(dirPersecucion * velocidadPatrulla, rb.linearVelocity.y);
+            if (animatorHijo != null) animatorHijo.SetBool("estaCaminando", true);
+            if (spriteRendererHijo != null) spriteRendererHijo.flipX = (dirPersecucion < 0);
+        }
         else
         {
-            if (rb != null)
-            {
-                rb.linearVelocity = new Vector2(direccion * velocidadPatrulla, rb.linearVelocity.y);
-            }
-
-            if (animatorHijo != null)
-            {
-                animatorHijo.SetBool("estaCaminando", true);
-            }
+            // Patrullar
+            if (rb != null) rb.linearVelocity = new Vector2(direccion * velocidadPatrulla, rb.linearVelocity.y);
+            if (animatorHijo != null) animatorHijo.SetBool("estaCaminando", true);
 
             temporizadorPatrulla -= Time.deltaTime;
             if (temporizadorPatrulla <= 0f)
@@ -97,10 +84,7 @@ public class EnemigoDisparador2 : MonoBehaviour
                 temporizadorPatrulla = tiempoPatrulla;
             }
 
-            if (spriteRendererHijo != null)
-            {
-                spriteRendererHijo.flipX = (direccion < 0);
-            }
+            if (spriteRendererHijo != null) spriteRendererHijo.flipX = (direccion < 0);
         }
     }
 
@@ -109,47 +93,16 @@ public class EnemigoDisparador2 : MonoBehaviour
         if (proyectilPrefab != null && puntoDisparo != null)
         {
             float dirProj = (spriteRendererHijo != null && spriteRendererHijo.flipX) ? -1f : 1f;
-
             float posXSegura = offsetDisparoOriginalX * dirProj;
             puntoDisparo.localPosition = new Vector3(posXSegura, puntoDisparo.localPosition.y, puntoDisparo.localPosition.z);
 
             GameObject proyectil = Instantiate(proyectilPrefab, puntoDisparo.position, Quaternion.identity);
-
+            
             SpriteRenderer srProj = proyectil.GetComponent<SpriteRenderer>();
-            if (srProj != null)
-            {
-                srProj.sortingOrder = 50;
-            }
+            if (srProj != null) srProj.sortingOrder = 50;
 
             ProyectilEnemigo2 scriptProj = proyectil.GetComponent<ProyectilEnemigo2>();
-            if (scriptProj != null)
-            {
-                scriptProj.AsignarDireccion(dirProj);
-            }
-        }
-    }
-
-    // --- MUERTE AL RECIBIR EL DISPARO DEL JUGADOR (Detecta por nombre o componente de bala) ---
-
-    // --- MUERTE AL RECIBIR EL DISPARO DEL JUGADOR USANDO TU TAG ---
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        // Si el objeto que choca es el proyectil del jugador
-        if (collision.gameObject.CompareTag("ProyectilJugador"))
-        {
-            Destroy(collision.gameObject); // Destruye la bala
-            Destroy(gameObject);           // Destruye al enemigo azul (Ene3)
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        // Por si el proyectil usa IsTrigger
-        if (collision.gameObject.CompareTag("ProyectilJugador"))
-        {
-            Destroy(collision.gameObject); // Destruye la bala
-            Destroy(gameObject);           // Destruye al enemigo azul (Ene3)
+            if (scriptProj != null) scriptProj.AsignarDireccion(dirProj);
         }
     }
 }
