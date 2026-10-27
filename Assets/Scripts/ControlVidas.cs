@@ -1,10 +1,11 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class ControlVidas : MonoBehaviour
 {
-    // Quitamos el 'static' para que las vidas pertenezcan a esta instancia de la escena actual
+    // Vidas iniciales del jugador (sin static para que se reinicien al recargar la escena)
     public int vidas = 3;
     public List<GameObject> vidasUI;
 
@@ -12,8 +13,7 @@ public class ControlVidas : MonoBehaviour
 
     private void Start()
     {
-        // Al iniciar la escena, nos aseguramos de que empiece con las 3 vidas predeterminadas
-        // (O puedes leerlas de un GameManager si lo manejas desde otro script)
+        // Al iniciar la escena, aseguramos que comience con 3 vidas
         vidas = 3;
 
         // Busca el Animator en este objeto o en su hijo "imagen"
@@ -72,13 +72,18 @@ public class ControlVidas : MonoBehaviour
                 controladorSonido.ReproducirMuerte();
             }
 
-            // Si las vidas llegan a 0...
+            // Si las vidas llegan a 0, mostramos la pantalla de muerte
             if (vidas <= 0)
             {
-                ControladorJuego controlador = FindFirstObjectByType<ControladorJuego>();
-                if (controlador != null)
+                ControlPantallaMuerte pantallaMuerte = FindFirstObjectByType<ControlPantallaMuerte>();
+                if (pantallaMuerte != null)
                 {
-                    controlador.RecargarEscena();
+                    pantallaMuerte.MostrarPantallaMuerte();
+                }
+                else
+                {
+                    // Plan B por si el script de la pantalla no se encuentra en la escena
+                    SceneManager.LoadScene(SceneManager.GetActiveScene().name);
                 }
             }
         }
