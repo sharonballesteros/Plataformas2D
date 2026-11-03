@@ -9,6 +9,7 @@ TagManager:
   - Suelo
   - EnemigoDisparador
   - ProyectilJugador
+  - Peligros
   layers:
   - Default
   - TransparentFX

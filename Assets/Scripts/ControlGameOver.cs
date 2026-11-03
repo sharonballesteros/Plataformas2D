@@ -1,52 +1,25 @@
 using UnityEngine;
 
-public class ControlGameOver : MonoBehaviour
+public class ControlGameOve : MonoBehaviour
 {
-    private GameObject player;
-    private bool gameOverActivo = false;
+    [Header("Interfaz de Game Over")]
+    public GameObject panelGameOver; // <-- Esta variable aparecerá en el Inspector
 
     void Start()
     {
-        // Busca al jugador automáticamente en la escena
-        GameObject encontrado = GameObject.FindWithTag("Player");
-        if (encontrado != null)
+        // Al iniciar el juego, normalmente quieres que el panel esté oculto
+        if (panelGameOver != null)
         {
-            player = encontrado;
-        }
-
-        // Asegura que la pantalla empiece oculta
-        gameObject.SetActive(false);
-    }
-
-    void Update()
-    {
-        // Si el Game Over está activo y presionas la barra espaciadora (Jump)
-        if (gameOverActivo && Input.GetButtonDown("Jump"))
-        {
-            // Busca el ControladorJuego moderno y ejecuta la recarga
-            ControladorJuego controlador = FindFirstObjectByType<ControladorJuego>();
-            if (controlador != null)
-            {
-                controlador.RecargarEscena();
-            }
-            else
-            {
-                // Alternativa directa si no encuentra el script
-                UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
-            }
+            panelGameOver.SetActive(false);
         }
     }
 
-    // Método que activa el Game Over (llámalo cuando las vidas lleguen a 0)
-    public void MuerteJugador()
+    public void MostrarGameOver()
     {
-        gameOverActivo = true;
-
-        if (player != null)
+        // Activa todo el contenedor (texto, fondo, botones) cuando mueras
+        if (panelGameOver != null)
         {
-            player.SetActive(false); // Oculta al jugador
+            panelGameOver.SetActive(true);
         }
-
-        gameObject.SetActive(true); // Muestra la pantalla de Game Over
     }
 }
