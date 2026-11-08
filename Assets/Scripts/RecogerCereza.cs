@@ -22,6 +22,7 @@ public class RecogerCereza : MonoBehaviour
         }
         ActualizarUI();
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // Verifica si el objeto que colisiona es el jugador
@@ -47,6 +48,16 @@ public class RecogerCereza : MonoBehaviour
 
     private void ActualizarUI()
     {
+        if (textoUI != null)
+        {
+            textoUI.text = cerezas.ToString();
+        }
+    }
+
+    // Método estático para reiniciar las cerezas a 0 y refrescar la pantalla sin errores
+    public static void ReiniciarContador()
+    {
+        cerezas = 0;
         if (textoUI != null)
         {
             textoUI.text = cerezas.ToString();

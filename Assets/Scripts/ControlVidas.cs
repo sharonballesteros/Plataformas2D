@@ -11,6 +11,9 @@ public class ControlVidas : MonoBehaviour
 
     private Animator animator;
 
+    [Header("Invulnerabilidad a Picos")]
+    public bool esInvulnerablePicos = false;
+
     private void Start()
     {
         // Al iniciar la escena, aseguramos que comience con 3 vidas
@@ -32,9 +35,15 @@ public class ControlVidas : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // Detecta daño por colisión física si toca "peligros" o "enemigo"
-        if (collision.gameObject.layer == LayerMask.NameToLayer("peligros") ||
-            collision.gameObject.layer == LayerMask.NameToLayer("enemigo"))
+        // Detecta daño por colisión física si toca "peligros" (validando invulnerabilidad) o "enemigo"
+        if (collision.gameObject.layer == LayerMask.NameToLayer("peligros"))
+        {
+            if (!esInvulnerablePicos)
+            {
+                PerderVida();
+            }
+        }
+        else if (collision.gameObject.layer == LayerMask.NameToLayer("enemigo"))
         {
             PerderVida();
         }
@@ -42,9 +51,15 @@ public class ControlVidas : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // 1. Detección de Daño por Trigger en la capa "peligros" o "enemigo"
-        if (collision.gameObject.layer == LayerMask.NameToLayer("peligros") ||
-            collision.gameObject.layer == LayerMask.NameToLayer("enemigo"))
+        // 1. Detección de Daño por Trigger en la capa "peligros" (validando invulnerabilidad) o "enemigo"
+        if (collision.gameObject.layer == LayerMask.NameToLayer("peligros"))
+        {
+            if (!esInvulnerablePicos)
+            {
+                PerderVida();
+            }
+        }
+        else if (collision.gameObject.layer == LayerMask.NameToLayer("enemigo"))
         {
             PerderVida();
         }
@@ -75,6 +90,9 @@ public class ControlVidas : MonoBehaviour
             // Si las vidas llegan a 0, mostramos la pantalla de muerte
             if (vidas <= 0)
             {
+                // --- NUEVO: Reiniciar el contador de cerezas al morir ---
+                RecogerCereza.ReiniciarContador();
+
                 ControlPantallaMuerte pantallaMuerte = FindFirstObjectByType<ControlPantallaMuerte>();
                 if (pantallaMuerte != null)
                 {
@@ -98,6 +116,18 @@ public class ControlVidas : MonoBehaviour
             ActualizarVidasUI();
             Debug.Log("¡Vida aumentada! Vidas actuales: " + vidas);
         }
+    }
+
+    // Corrutina que activa la inmunidad temporal contra los picos
+    public IEnumerator ActivarInvulnerabilidadPicos(float duracion)
+    {
+        esInvulnerablePicos = true;
+        Debug.Log("¡Invulnerable a los picos activada!");
+
+        yield return new WaitForSeconds(duracion);
+
+        esInvulnerablePicos = false;
+        Debug.Log("Efecto de poción terminado.");
     }
 
     IEnumerator EfectoDanio()

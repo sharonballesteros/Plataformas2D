@@ -65,5 +65,8 @@ TagManager:
   - name: personajes
     uniqueID: 229920435
     locked: 0
+  - name: hazard
+    uniqueID: 3114460787
+    locked: 0
   m_RenderingLayers:
   - Default

@@ -2,35 +2,71 @@ using UnityEngine;
 
 public class ControlMeta : MonoBehaviour
 {
-    [Header("Interfaz de Fin de Nivel")]
-    public GameObject contenedorFinNivel; // Arrastra aquí PantallaSiguienteNivel
+    [Header("Configuración de Nivel")]
+    public bool esUltimoNivel = false; // Desmarcado en niveles normales
+
+    [Header("Interfaces (Niveles Normales)")]
+    public GameObject contenedorFinNivel; // Arrastra aquí tu PantallaSiguienteNivel
+
+    [Header("Pantalla de Game Over (Solo Último Nivel)")]
+    public GameObject panelGameOverDirecto;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player") || collision.gameObject.name == "Player")
         {
-            Debug.Log("fin de nivel");
+            Debug.Log("Fin de nivel alcanzado");
 
-            // --- ¡AQUÍ REPRODUCIMOS EL AUDIO DE VICTORIA! ---
+            // 1. Reproducir audio de victoria
             ControladorSonido controladorSonido = FindFirstObjectByType<ControladorSonido>();
             if (controladorSonido != null)
             {
                 controladorSonido.ReproducirVictoria();
             }
 
-            // 1. Oculta al jugador
+            // 2. Ocultar al jugador
             collision.gameObject.SetActive(false);
 
-            // 2. Muestra el panel de fin de nivel
-            if (contenedorFinNivel != null)
+            // 3. Evaluar si es el último nivel o uno normal
+            if (esUltimoNivel)
             {
-                contenedorFinNivel.SetActive(true);
-
-                // Activa la lógica de control del siguiente nivel
-                ControlSiguienteNivel scriptSiguiente = contenedorFinNivel.GetComponent<ControlSiguienteNivel>();
-                if (scriptSiguiente != null)
+                if (panelGameOverDirecto != null)
                 {
-                    scriptSiguiente.MostrarPantallaSiguienteNivel();
+                    panelGameOverDirecto.SetActive(true);
+                    foreach (Transform hijo in panelGameOverDirecto.transform)
+                    {
+                        hijo.gameObject.SetActive(true);
+                    }
+
+                    ControlGameOve controlGO = panelGameOverDirecto.GetComponent<ControlGameOve>();
+                    if (controlGO != null)
+                    {
+                        controlGO.HabilitarLecturaEspacio();
+                    }
+                }
+            }
+            else
+            {
+                // Muestra el panel normal de siguiente nivel a la fuerza
+                if (contenedorFinNivel != null)
+                {
+                    contenedorFinNivel.SetActive(true);
+
+                    // Forzamos también a encender los hijos por si alguno está apagado
+                    foreach (Transform hijo in contenedorFinNivel.transform)
+                    {
+                        hijo.gameObject.SetActive(true);
+                    }
+
+                    ControlSiguienteNivel scriptSiguiente = contenedorFinNivel.GetComponent<ControlSiguienteNivel>();
+                    if (scriptSiguiente != null)
+                    {
+                        scriptSiguiente.MostrarPantallaSiguienteNivel();
+                    }
+                }
+                else
+                {
+                    Debug.LogError("¡Falta asignar el Contenedor Fin Nivel en el Inspector de la bandera!");
                 }
             }
         }
